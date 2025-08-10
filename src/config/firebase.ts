@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -14,7 +15,7 @@ const firebaseConfig = {
   storageBucket: "react-sm-d160d.firebasestorage.app",
   messagingSenderId: "999452398968",
   appId: "1:999452398968:web:6533e3cdcbb7cb0ca8a48d",
-  measurementId: "G-5DKSR5PFWD"
+  measurementId: "G-5DKSR5PFWD",
 };
 
 // Initialize Firebase
@@ -23,3 +24,4 @@ const analytics = getAnalytics(app);
 
 export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
+export const db = getFirestore(app);

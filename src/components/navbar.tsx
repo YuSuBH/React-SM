@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { auth } from "../config/config";
+import { auth } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 
@@ -12,9 +12,13 @@ export const Navbar = () => {
 
   return (
     <div className="navbar">
-      <div className="navRoutes">
+      <div className="Links">
         <Link to="/"> Home </Link>
-        <Link to="/login"> Login </Link>
+        {!user ? (
+          <Link to="/login"> Login </Link>
+        ) : (
+          <Link to="/createpost"> New Post </Link>
+        )}
       </div>
 
       <div className="navProfile">
