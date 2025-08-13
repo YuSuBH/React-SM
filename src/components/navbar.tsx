@@ -12,7 +12,7 @@ export const Navbar = () => {
 
   return (
     <div className="navbar">
-      <div className="Links">
+      <div className="navLinks">
         <Link to="/"> Home </Link>
         {!user ? (
           <Link to="/login"> Login </Link>

@@ -37,13 +37,17 @@ export const Main = () => {
   }, [user]);
 
   return (
-    <div>
+    <div className="postContainer">
       {!user ? (
-        <p>Login to view the posts</p>
+        <p className="loginPrompt">Login to view the posts</p>
       ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
+        <p className="errorMessage">{error}</p>
       ) : (
-        postList?.map((post) => <Post post={post} />)
+        <div className="postsFeed">
+          {postList?.map((post) => (
+            <Post key={post.id} post={post} />
+          ))}
+        </div>
       )}
     </div>
   );
