@@ -7,13 +7,15 @@ import {
   where,
   doc,
 } from "firebase/firestore";
-import { auth, db } from "../../config/firebase";
-import { Post as IPost } from "./main";
+import { auth, db } from "../config/firebase";
+import { Post as IPost } from "../pages/main/main";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useState } from "react";
 
 interface Props {
   post: IPost;
+  canDelete: boolean;
+  onPostDelete?: (postId: string) => void;
 }
 
 interface Like {
@@ -79,6 +81,41 @@ export const Post = (props: Props) => {
     }
   };
 
+  const deleteLikesOfPost = async (postId: string) => {
+    try {
+      const likesToDeleteQuery = query(likesRef, where("postId", "==", postId));
+
+      const likesToDeleteData = await getDocs(likesToDeleteQuery);
+
+      const deletePromises = likesToDeleteData.docs.map((likeDoc) =>
+        deleteDoc(doc(db, "likes", likeDoc.id))
+      );
+
+      await Promise.all(deletePromises);
+      console.log(
+        `Deleted ${likesToDeleteData.docs.length} likes for post ${postId}`
+      );
+    } catch (err) {
+      console.log("Error deleting likes:", err);
+    }
+  };
+
+  const deletePost = async () => {
+    try {
+      await deleteLikesOfPost(post.id);
+
+      await deleteDoc(doc(db, "posts", post.id));
+
+      if (props.onPostDelete) {
+        props.onPostDelete(post.id);
+      }
+
+      console.log("Post and associated likes deleted successfully");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const hasUserLiked = likes?.find((like) => like.userId == user?.uid);
 
   useEffect(() => {
@@ -126,6 +163,26 @@ export const Post = (props: Props) => {
               )}
             </button>
             {likes && <span className="likeCount">{likes?.length}</span>}
+
+            {props.canDelete && (
+              <button
+                className="deleteButton"
+                onClick={deletePost}
+                title="Delete"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+              </button>
+            )}
+
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { Main } from "./pages/main/main";
 import { Login } from "./pages/login";
 import { Navbar } from "./components/navbar";
 import { CreatePost } from "./pages/create-post/create-post";
+import { MyPosts } from "./pages/my-posts/my-posts";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/createpost" element={<CreatePost />} />
+          <Route path="/myposts" element={<MyPosts />} />
         </Routes>
       </BrowserRouter>
     </div>

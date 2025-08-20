@@ -1,4 +1,4 @@
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../config/firebase";
 import { PostList } from "../../components/postList";
@@ -12,7 +12,7 @@ export interface Post {
   description: string;
 }
 
-export const Main = () => {
+export const MyPosts = () => {
   const [user] = useAuthState(auth);
 
   const [postList, setPostList] = useState<Post[] | null>(null);
@@ -23,13 +23,22 @@ export const Main = () => {
   const getPosts = async () => {
     try {
       if (!user) return;
-      const data = await getDocs(postRef);
+
+      const userPostsQuery = query(postRef, where("userId", "==", user.uid));
+      const data = await getDocs(userPostsQuery);
+
       setPostList(
         data.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Post[]
       );
     } catch (err: any) {
       setError(err.message || "An error occurred.");
     }
+  };
+
+  const removePostFromList = (postId: string) => {
+    setPostList((prevPosts) =>
+      prevPosts ? prevPosts.filter((post) => post.id !== postId) : null
+    );
   };
 
   useEffect(() => {
@@ -46,8 +55,9 @@ export const Main = () => {
         <div className="postsFeed">
           <PostList
             postList={postList}
-            emptyMessage="No posts available"
-            canDelete={false}
+            emptyMessage="You have not posted yet!!!"
+            canDelete={true}
+            onPostDelete={removePostFromList}
           />
         </div>
       )}

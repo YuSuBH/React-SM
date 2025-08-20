@@ -13,11 +13,14 @@ interface CreateFormData {
 
 export const CreateForm = () => {
   const [user] = useAuthState(auth);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const schema = yup.object().shape({
     title: yup.string().required("You must add a title."),
-    description: yup.string().required("You must add a description."),
+    description: yup
+      .string()
+      .required("You must add a description.")
+      .max(80, "Description must be less than 80 characters"),
   });
 
   const {
@@ -28,7 +31,7 @@ export const CreateForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const postsRef = collection(db, "posts")
+  const postsRef = collection(db, "posts");
 
   const onCreatePost = async (data: CreateFormData) => {
     await addDoc(postsRef, {
@@ -37,18 +40,22 @@ export const CreateForm = () => {
       // description: data.description,
       username: user?.displayName,
       userId: user?.uid,
-    })
+    });
 
-    navigate("/")
+    navigate("/");
   };
 
   return (
     <form onSubmit={handleSubmit(onCreatePost)}>
       <input placeholder="Title..." {...register("title")} />
-      <p className="inputErrors"> { errors.title?.message}</p>
-      <textarea placeholder="Description..." {...register("description")} />
+      <p className="inputErrors"> {errors.title?.message}</p>
+      <textarea
+        maxLength={80}
+        placeholder="Description..."
+        {...register("description")}
+      />
       <p className="inputErrors"> {errors.description?.message}</p>
-      
+
       <input type="submit" />
     </form>
   );
