@@ -22,17 +22,15 @@ export const PostList: React.FC<PostListProps> = ({
   }
 
   return (
-    <div className="postContainer">
-      <div className="postsFeed">
-        {postList?.map((post) => (
-          <Post
-            key={post.id}
-            post={post}
-            canDelete={canDelete}
-            onPostDelete={onPostDelete}
-          />
-        ))}
-      </div>
-    </div>
+    <>
+      {postList?.map((post) => (
+        <Post
+          key={post.id}
+          post={post}
+          canDelete={canDelete}
+          onPostDelete={onPostDelete}
+        />
+      ))}
+    </>
   );
 };

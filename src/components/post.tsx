@@ -116,7 +116,7 @@ export const Post = (props: Props) => {
     }
   };
 
-  const hasUserLiked = likes?.find((like) => like.userId == user?.uid);
+  const hasUserLiked = likes?.find((like) => like.userId === user?.uid);
 
   useEffect(() => {
     getLikes();
@@ -129,11 +129,11 @@ export const Post = (props: Props) => {
           <h1 className="postTitle">{post.title}</h1>
         </div>
         <div className="postBody">
+          <p className="postAuthor">@{post.username}</p>
           <p className="postDescription">{post.description}</p>
         </div>
 
         <div className="postFooter">
-          <p className="postAuthor">@{post.username}</p>
           <div className="postActions">
             <button
               className={`likeButton ${hasUserLiked ? "liked" : "unliked"}`}
@@ -182,7 +182,6 @@ export const Post = (props: Props) => {
                 </svg>
               </button>
             )}
-
           </div>
         </div>
       </div>

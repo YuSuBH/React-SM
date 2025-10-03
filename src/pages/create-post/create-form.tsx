@@ -17,10 +17,7 @@ export const CreateForm = () => {
 
   const schema = yup.object().shape({
     title: yup.string().required("You must add a title."),
-    description: yup
-      .string()
-      .required("You must add a description.")
-      .max(80, "Description must be less than 80 characters"),
+    description: yup.string().required("You must add a description."),
   });
 
   const {
@@ -47,16 +44,12 @@ export const CreateForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onCreatePost)}>
-      <input placeholder="Title..." {...register("title")} />
+      <input className="title" placeholder="Title..." {...register("title")} />
       <p className="inputErrors"> {errors.title?.message}</p>
-      <textarea
-        maxLength={80}
-        placeholder="Description..."
-        {...register("description")}
-      />
+      <textarea placeholder="Description..." {...register("description")} />
       <p className="inputErrors"> {errors.description?.message}</p>
 
-      <input type="submit" />
+      <input type="submit" value="Post" />
     </form>
   );
 };
