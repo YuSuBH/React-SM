@@ -255,6 +255,36 @@ body {
   border-radius: 0;
 }
 
+.sortOptions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--text-color);
+  background: var(--base-color);
+}
+
+.sortOptions label {
+  margin-right: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sortOptions select {
+  padding: 0.5rem;
+  border: 1px solid var(--text-color);
+  border-radius: 0;
+  background: var(--base-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.sortOptions select:focus {
+  outline: none;
+  border-color: var(--brand-color);
+}
+
 .loginPrompt,
 .errorMessage,
 .emptyMessage {
