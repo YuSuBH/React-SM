@@ -14,6 +14,7 @@ export const Navbar = () => {
   return (
     <div className="navbar">
       <div className="navLinks">
+        <img src="/BlogSpot.svg" width="90" height="30" />
         <Link to="/"> Home </Link>
         {!user ? (
           <Link to="/login"> Login </Link>
