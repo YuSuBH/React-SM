@@ -1,6 +1,7 @@
 import { getDocs, collection } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { auth, db } from "../../config/firebase";
+
 import { PostList } from "../../components/postList";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -39,6 +40,7 @@ export const Main = () => {
 
   useEffect(() => {
     getPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return (
@@ -54,6 +56,8 @@ export const Main = () => {
             emptyMessage="No posts available"
             canDelete={false}
           />
+          {/* Example usage of CommentList, you can adjust as needed */}
+          {/* <CommentList commentList={commentList} emptyMessage="No comments available" /> */}
         </div>
       )}
     </div>

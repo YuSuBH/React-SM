@@ -10,6 +10,8 @@ import {
 import { auth, db } from "../config/firebase";
 import { Timestamp } from "firebase/firestore";
 import { Post as IPost } from "../pages/main/main";
+import { CommentList } from "./commentList";
+import { CommentForm } from "../pages/create-comment/comment-form";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useState } from "react";
 
@@ -27,11 +29,11 @@ interface Like {
 export const Post = (props: Props) => {
   const { post } = props;
   const [user] = useAuthState(auth);
-
   const [likes, setLikes] = useState<Like[] | null>(null);
+  const [showComments, setShowComments] = useState(false);
+  const [comments, setComments] = useState<any[] | null>(null);
 
   const likesRef = collection(db, "likes");
-
   const likesDoc = query(likesRef, where("postId", "==", post.id));
 
   const getLikes = async () => {
@@ -39,6 +41,22 @@ export const Post = (props: Props) => {
     setLikes(
       data.docs.map((doc) => ({ userId: doc.data().userId, likeId: doc.id }))
     );
+  };
+
+  const getComments = async () => {
+    try {
+      const commentsRef = collection(db, "comments");
+      const commentsQuery = query(commentsRef, where("postId", "==", post.id));
+      const data = await getDocs(commentsQuery);
+      setComments(
+        data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
+    } catch (err) {
+      console.log("Error fetching comments:", err);
+    }
   };
 
   const addLike = async () => {
@@ -121,7 +139,15 @@ export const Post = (props: Props) => {
 
   useEffect(() => {
     getLikes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (showComments) {
+      getComments();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showComments, post.id]);
 
   // Helper to format date/time
   const formatPostDate = (createdAt: any) => {
@@ -156,12 +182,46 @@ export const Post = (props: Props) => {
           <h1 className="postTitle">{post.title}</h1>
         </div>
         <div className="postBody">
-          <p className="postAuthor">@{post.username}</p>
-          <p className="postDate">{formatPostDate(post.createdAt)}</p>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 4,
+            }}
+          >
+            <p className="postAuthor" style={{ marginBottom: 0 }}>
+              @{post.username}
+            </p>
+            <span
+              style={{
+                color: "var(--secondary-text-color)",
+                fontSize: "0.95rem",
+              }}
+            >
+              {formatPostDate(post.createdAt)}
+            </span>
+          </div>
           <p className="postDescription">{post.description}</p>
         </div>
 
         <div className="postFooter">
+          <div
+            className="postComment"
+            onClick={() => setShowComments(!showComments)}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span className="commentsLabel">Comments</span>
+          </div>
           <div className="postActions">
             <button
               className={`likeButton ${hasUserLiked ? "liked" : "unliked"}`}
@@ -212,6 +272,25 @@ export const Post = (props: Props) => {
             )}
           </div>
         </div>
+
+        {/* Comments Section */}
+        {showComments && (
+          <div className="commentsSection">
+            <button
+              className="commentsCloseBtn"
+              onClick={() => setShowComments(false)}
+              aria-label="Close comments"
+            >
+              ×
+            </button>
+            <h4 className="commentsTitle">Comments</h4>
+            <CommentForm postId={post.id} onCommentAdded={getComments} />
+            <CommentList
+              commentList={comments}
+              emptyMessage="No comments yet."
+            />
+          </div>
+        )}
       </div>
     </div>
   );
