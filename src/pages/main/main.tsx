@@ -10,6 +10,7 @@ export interface Post {
   title: string;
   username: string;
   description: string;
+  createdAt?: any;
 }
 
 export const Main = () => {
@@ -25,7 +26,11 @@ export const Main = () => {
       if (!user) return;
       const data = await getDocs(postRef);
       setPostList(
-        data.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Post[]
+        data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+          createdAt: doc.data().createdAt,
+        })) as Post[]
       );
     } catch (err: any) {
       setError(err.message || "An error occurred.");

@@ -8,6 +8,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { auth, db } from "../config/firebase";
+import { Timestamp } from "firebase/firestore";
 import { Post as IPost } from "../pages/main/main";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useState } from "react";
@@ -122,6 +123,32 @@ export const Post = (props: Props) => {
     getLikes();
   }, []);
 
+  // Helper to format date/time
+  const formatPostDate = (createdAt: any) => {
+    if (!createdAt) return "";
+    let dateObj;
+    if (createdAt instanceof Timestamp) {
+      dateObj = createdAt.toDate();
+    } else if (createdAt.seconds) {
+      dateObj = new Date(createdAt.seconds * 1000);
+    } else {
+      dateObj = new Date(createdAt);
+    }
+    const now = new Date();
+    const diffMs = now.getTime() - dateObj.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    if (diffHours < 24) {
+      // Show time (e.g., 14:30)
+      return dateObj.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      // Show date (e.g., 2025-10-04)
+      return dateObj.toLocaleDateString();
+    }
+  };
+
   return (
     <div className="posts">
       <div className="postCard">
@@ -130,6 +157,7 @@ export const Post = (props: Props) => {
         </div>
         <div className="postBody">
           <p className="postAuthor">@{post.username}</p>
+          <p className="postDate">{formatPostDate(post.createdAt)}</p>
           <p className="postDescription">{post.description}</p>
         </div>
 
